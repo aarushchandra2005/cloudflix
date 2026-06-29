@@ -1,0 +1,49 @@
+name: Deploy CloudFlix Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image
+        run: |
+          docker buildx build --platform linux/amd64 \
+            -t 248369845366.dkr.ecr.ap-south-1.amazonaws.com/cloudflix-backend:latest \
+            --push .
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 248369845366.dkr.ecr.ap-south-1.amazonaws.com
+            docker pull 248369845366.dkr.ecr.ap-south-1.amazonaws.com/cloudflix-backend:latest
+            docker stop cloudflix 2>/dev/null || true
+            docker rm cloudflix 2>/dev/null || true
+            docker run -d \
+              --name cloudflix \
+              --env-file ~/cloudflix/.env \
+              -p 5001:5001 \
+              --restart always \
+              248369845366.dkr.ecr.ap-south-1.amazonaws.com/cloudflix-backend:latest
