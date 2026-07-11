@@ -173,9 +173,9 @@ Environment variables for all secrets (never hardcoded)
 Aarush Chandra
 
 
-GitHub: @aarushchandra2005
-LinkedIn: aarush-chandra-44a73330b
-Email: aarushchandra1111@gmail.com
+- GitHub: @aarushchandra2005
+- LinkedIn: aarush-chandra-44a73330b
+- Email: aarushchandra1111@gmail.com
 
 
 
