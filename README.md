@@ -7,13 +7,6 @@ A full-stack Netflix-clone built with React.js, Node.js, and AWS cloud infrastru
 🌐 Live Demo: dpqhdztucaz15.cloudfront.net
 
 
-# Screenshots
-
-
-Home Page | Video Player | Mobile View
-
-
-
 
 # Architecture
 
